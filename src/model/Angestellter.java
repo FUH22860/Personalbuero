@@ -5,10 +5,13 @@ import java.time.Year;
  * Klasse Angestellter
  * 
  * @author (WES) 
- * @version (2022-03-18)
+ * @version (2022-04-01)
  * 
  * umgestellt auf Exception-Handling
+ * mit Angestellter(String[]);
  */
+
+// mit auskommentierter toStringCsv() 
 public class Angestellter extends Mitarbeiter implements GehaltBerechenbar
 {
 
@@ -24,6 +27,11 @@ public class Angestellter extends Mitarbeiter implements GehaltBerechenbar
         super(name, gesch, gebJahr, eintrJahr);
     }
     
+    public Angestellter(String[] zeilenTeile) throws PersonalException
+    {
+    	super(zeilenTeile);
+    }
+    
     @Override // auf Deutsch "ueberschreiben" der Methode toString() aus der Superklasse Mitarbeiter
     public String toString()
     {
@@ -36,5 +44,13 @@ public class Angestellter extends Mitarbeiter implements GehaltBerechenbar
     {
         return 1500f + 50f*berechneDienstalter();
     }
+    
+    // -------------------------- toString ------------------------
+    
+//    public String toStringCsv()
+//    {
+//    	return super.toStringCsv();
+//    	// es gibt keine weiteren Attribute
+//    }
 
 }

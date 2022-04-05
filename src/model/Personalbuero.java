@@ -1,15 +1,21 @@
 package model;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
-// 2022-03-25 4BAIF
+// 2022-04-01 4BAIF
 
 // Umgestellt auf ArrayList
 // mit public float berechneDurchnittsalter()
@@ -43,10 +49,9 @@ import java.io.ObjectOutputStream;
 // Textfile Speichern:
 // exportMitarbeiter
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+// 2022-03-29 exportMitarbeiterCsv
+
+// 2022-04-01 importMitarbeiterCsc Vorbereitung
 
 public class Personalbuero {
 	private ArrayList<Mitarbeiter> mitarbeiter; // eine ArrayList ist "getypt"
@@ -400,12 +405,47 @@ public class Personalbuero {
 
 		try (BufferedWriter bw = new BufferedWriter(new FileWriter(strPfadName))) {
 			StringBuilder sb = new StringBuilder(100000);
-			for (Mitarbeiter mit : mitarbeiter) {
-				sb.append(mit.toStringCsv()).append(nLn);
-			}
+			for (Mitarbeiter mit : mitarbeiter)
+				sb.append(mit.toStringCsv()).append(nLn); // .append("\n");
 			bw.write(sb.toString());
 		} catch (IOException e) {
-			throw new PersonalException("Eingabe/Ausgabe-Fehler bei exportMitarbeiter()" + e.getMessage());
+			throw new PersonalException("Eingabe/Ausgabe-Fehler bei exportMitarbeiterCsv()" + e.getMessage());
+		}
+	}
+
+	public void importMitarbeiterCsv() throws PersonalException // TODO
+	{
+		String fSep = System.getProperty("file.separator");
+		String strPfadName = "c:" + fSep + "scratch" + fSep + "mitarbeiter.csv";
+
+		try (BufferedReader br = new BufferedReader(new FileReader(strPfadName))) {
+			String zeile;
+			String[] zeilenTeile;
+			String sep = ";"; // erwartetes Trennzeichen in der csv-Datei
+
+			// Muster: "Vorauslesen"
+			zeile = br.readLine(); // wenn keine Zeile gefunden, dann return null
+
+			while (zeile != null) {
+				zeilenTeile = zeile.trim().split(sep);
+
+				// Welcher Konstruktor wird aufgerufen?
+				// Wie ermitteln wir den Mitarbeiter-Typ?
+
+				if (zeile.contains("Angestellter")) {
+					aufnehmen(new Angestellter(zeilenTeile));
+				} else
+					; // if ((zeile.contains("Freelancer"))
+						// else
+						// if ((zeile.contains("Arzt"))
+						// else unbekannter Mitarbeiter-Typ
+				zeile = br.readLine();
+			}
+
+		} catch (FileNotFoundException e) {
+			throw new PersonalException("Datei-Fehler bei importMitarbeiterCsv(): " + e.getMessage());
+		} catch (IOException e) {
+			throw new PersonalException("Eingabe/Ausgabe-Fehler bei importMitarbeiterCsv(): " + e.getMessage());
 		}
 	}
 

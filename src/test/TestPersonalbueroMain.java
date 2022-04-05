@@ -36,8 +36,6 @@ public class TestPersonalbueroMain {
 			testLoadMitarbeiter();
 			
 			testExportMitarbeiter();
-			
-			testExport();
 
 		} catch (Exception e) {
 			System.out.println("TestPersonalbueroMain: ein unerwarteter Ausnahme-Fehler ist aufgetreten");
@@ -46,31 +44,6 @@ public class TestPersonalbueroMain {
 		}
 	}
 
-	private static void testExport() {
-		String nLn = System.getProperty("line.separator");
-		
-		System.out.println("+++++++++++++++++++++++ testExportCsvMitarbeiter +++++++++++++++++++++++++\n");
-		try {
-			Personalbuero pb = new Personalbuero();
-
-			Angestellter a1 = new Angestellter("Alfred", 'm', Year.of(1977), Year.now());
-			pb.aufnehmen(a1);
-
-			Freelancer f2 = new Freelancer("Anna", 'w', Year.of(1976), Year.of(2002), 100f, 10);
-			pb.aufnehmen(f2);
-
-			System.out.println(pb); // Alfred, Anna
-			System.out.println();
-
-			pb.exportMitarbeiterCsv();
-			System.out.println("exportMitarbeiterCsv() wurde ausgefuehrt");
-		}
-		catch (PersonalException e)
-		{
-			System.out.println("!!! Fehler bei TestExport !!!" +nLn+ e.getMessage());
-		}
-	}
-	
 	private static void testExportMitarbeiter() {
 
 		System.out.println("+++++++++++++++++++++++ testExportMitarbeiter +++++++++++++++++++++++++\n");

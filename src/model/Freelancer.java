@@ -1,8 +1,9 @@
 package model;
 
-// 2022-03-22 4BAIF
+// 2022-04-01 4BAIF
 // umgestellt auf Exception-Handling
 // mit serialVersionUID fuer Serialisierung
+// mit toStringCsv()
 
 import java.time.Year;
 public class Freelancer extends Mitarbeiter implements PraemieBerechenbar, GehaltBerechenbar
@@ -27,6 +28,30 @@ public class Freelancer extends Mitarbeiter implements PraemieBerechenbar, Gehal
         super(name, gesch, gebJahr, eintrJahr); // Aufruf des. K. der Superklasse
         setStundenSatz(stundenSatz);
         setStunden(stunden);        
+    }
+    
+    public Freelancer (String[] zeilenTeile) throws PersonalException
+    {
+    	super(zeilenTeile);
+    	// Freelancer;Anna;w;1976;2002;"10";"100.0"
+    	//                             [5]  [6] im String-Array zeilenTeile
+    	// Achtung: ArrayIndexOutOfBoundsException
+    	// beim Parsen: NumberFormatException
+    	try
+    	{
+    		setStunden( Integer.parseInt(zeilenTeile[5].trim()) ); // int
+    		setStundenSatz( Float.parseFloat(zeilenTeile[6].trim()) ); // float
+    	}
+    	catch(ArrayIndexOutOfBoundsException e)
+    	{
+    		throw new PersonalException("Array-Fehler bei Freelancer(zeilenTeile): " 
+    									+ e.getMessage());
+    	} 
+    	catch(NumberFormatException e)
+    	{
+    		throw new PersonalException("Zahlenumwandlungs-Fehler (gebJahr oder eintrJahr) bei Freelancer(zeilenTeile): " 
+					+ e.getMessage());    		
+    	}
     }
 
     public int getStunden()
@@ -97,6 +122,15 @@ public class Freelancer extends Mitarbeiter implements PraemieBerechenbar, Gehal
     public String infoBerechnungPraemie()
     {
        return "Fuer 15 Jahre Mitarbeit bei einem Personalbuero erhaelt der Freelancer ein \"Gehalt\", fuer 20 Jahre zwei \"Gehaelter\"\" als Praemie.";
+    }
+    
+    // ---------------------------- toString / print ----------------------------
+    
+    public String toStringCsv()
+    {
+    	char sep = ';';
+    	
+    	return super.toStringCsv()+sep+stunden+sep+stundenSatz;
     }
     
     public String toString()

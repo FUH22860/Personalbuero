@@ -5,9 +5,11 @@ import java.time.Year;
  * Klasse Arzt 
  *
  * @author (WES)
- * @version (2022-03-18)
+ * @version (2022-03-31)
  * 
  * umgestellt auf Exception-Handling
+ * mit freiwilliger Uebung toStringCsv()
+ * mit freiwilliger Uebung public Arzt (String[] zeilenTeile)
  */
 public class Arzt extends Mitarbeiter implements GehaltBerechenbar
 {
@@ -15,6 +17,9 @@ public class Arzt extends Mitarbeiter implements GehaltBerechenbar
     private int wochenStunden;
     private float fixum;
 
+    // FUE
+    // public Arzt (String[] zeilenTeile) // TODO
+    
     public Arzt(String name, char gesch, Year gebJahr, Year eintrJahr, int wochenStunden, float fixum) throws PersonalException
     {
         super(name, gesch, gebJahr, eintrJahr);
@@ -56,6 +61,8 @@ public class Arzt extends Mitarbeiter implements GehaltBerechenbar
         return fixum;
     }
     
+    // -------------------------- print / toString / toStringCsv ------------
+    
     // public void printInfo() // zum Testen
     // {
         // System.out.println(this);
@@ -67,6 +74,14 @@ public class Arzt extends Mitarbeiter implements GehaltBerechenbar
                 super.toString() +
                ", Wochenstunden: " + wochenStunden +
                ", Fixum: " + fixum;
+    }
+    
+    public String toStringCsv()
+    {
+    	String sep = ";";
+    	//     Arzt;Wolfgang;m;1964;2022 ;          40     ;  1200.0      
+    	return super.toStringCsv()     +sep+wochenStunden+sep+fixum;
+    	
     }
     
 }
