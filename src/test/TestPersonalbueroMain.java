@@ -34,7 +34,7 @@ public class TestPersonalbueroMain {
 
 			testSaveMitarbeiter();
 			testLoadMitarbeiter();
-			
+
 			testExportMitarbeiter();
 
 		} catch (Exception e) {
@@ -47,7 +47,7 @@ public class TestPersonalbueroMain {
 	private static void testExportMitarbeiter() {
 
 		System.out.println("+++++++++++++++++++++++ testExportMitarbeiter +++++++++++++++++++++++++\n");
-		
+
 		try {
 			Personalbuero pb = new Personalbuero();
 
@@ -55,17 +55,17 @@ public class TestPersonalbueroMain {
 			pb.aufnehmen(a1);
 			Freelancer f2 = new Freelancer("Anna", 'w', Year.of(1976), Year.of(2002), 100f, 10); // 1000
 			pb.aufnehmen(f2);
-			
-			System.out.println(pb);  // Alfred / Anna
+
+			System.out.println(pb); // Alfred / Anna
 			System.out.println();
-			
+
 			pb.exportMitarbeiter();
 			System.out.println("Die Mitarbeiter wurden exportiert");
-			
+
 		} catch (PersonalException e) {
 			System.out.println(e.getMessage());
 		}
-		
+
 	}
 
 	public static void testSaveMitarbeiter() {

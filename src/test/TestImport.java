@@ -6,7 +6,7 @@ import model.Freelancer;
 import model.PersonalException;
 import model.Personalbuero;
 
-// 2022-04-01
+// 2022-04-05
 
 public class TestImport
 {
@@ -22,7 +22,8 @@ public class TestImport
 			System.out.println();
 			
 			// zeilenTeile-Konstruktoren testen
-			// TODO Freelancer
+			// TODO FUE Freelancer
+			// TODO FUE Arzt
 			
 //			pb.aufnehmen(new Angestellter(new String[] {})); // Array-Fehler: Index 1 out of bounds for length 0
 //			pb.aufnehmen(new Angestellter(new String[] {"", "", "", "",""})); // Fehler: falscher Parameterwert name		
@@ -34,14 +35,13 @@ public class TestImport
 			System.out.println(pb); // Hans, Hannes
 			System.out.println();			
 
-//			System.out.println("TODO: Personalbuero.importMitarbeiterCsv() ist noch zu implementieren!!!");	 // TODO		
 			pb.importMitarbeiterCsv();
 			System.out.println(pb);	// Hans, Hannes, Alfred, Anna, Wolfgang
 			System.out.println();
 			
 			try {
 				Freelancer f2 = new Freelancer("Anna", 'w', Year.of(1976), Year.of(2002), 100f, 10);
-				pb.aufnehmen(f2); // Fehler schon vorhanden
+				pb.aufnehmen(f2); // Fehler schon vorhanden // TODO kein Fehler	
 			}
 			catch (PersonalException e) { 
 				System.out.println("!!! Fehler bei TestImport !!!" +nLn+ e.getMessage());
@@ -52,13 +52,15 @@ public class TestImport
 			System.out.println();
 			
 			Angestellter a1 = new Angestellter("Alfred", 'm', Year.of(1977), Year.now());
-			pb.aufnehmen(a1); // Fehler schon vorhanden		
+			pb.aufnehmen(a1); // Fehler schon vorhanden // TODO kein Fehler		
 
+			System.out.println(pb);	// Hans, Hannes, Alfred, Anna, Wolfgang
+			System.out.println();			
+			
 		}
 		catch (PersonalException e)
 		{
 			System.out.println("!!! Fehler bei TestImport !!!" +nLn+ e.getMessage());
 		}
-		
 	}
 }

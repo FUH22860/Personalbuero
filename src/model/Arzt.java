@@ -5,20 +5,29 @@ import java.time.Year;
  * Klasse Arzt 
  *
  * @author (WES)
- * @version (2022-03-31)
+ * @version (2022-04-05)
  * 
  * umgestellt auf Exception-Handling
  * mit freiwilliger Uebung toStringCsv()
  * mit freiwilliger Uebung public Arzt (String[] zeilenTeile)
+ * mit public Arzt(String[] zeilenTeile)
+ * mit setAllFields(String[] zeilenTeile)
  */
+
 public class Arzt extends Mitarbeiter implements GehaltBerechenbar
 {
-	private static final long serialVersionUID = 2022_03_22__13_15L;
+	private static final long serialVersionUID = 2022_04_05__12_40L;
     private int wochenStunden;
     private float fixum;
 
-    // FUE
-    // public Arzt (String[] zeilenTeile) // TODO
+    // FUE 2002-04-01
+    // public Arzt (String[] zeilenTeile)
+    
+    public Arzt (String[] zeilenTeile) throws PersonalException
+    {
+    	super(zeilenTeile);
+    	setAllFields(zeilenTeile);
+    }
     
     public Arzt(String name, char gesch, Year gebJahr, Year eintrJahr, int wochenStunden, float fixum) throws PersonalException
     {
@@ -41,6 +50,27 @@ public class Arzt extends Mitarbeiter implements GehaltBerechenbar
             this.fixum = fixum;
         else
         	throw new PersonalException("Fehler bei setFixum(): Wert von fixum muss groesser 0.0 sein (" + fixum + ")");
+    }
+    
+    private void setAllFields(String[] zeilenTeile) throws PersonalException
+    {
+    	try {
+	    	// 10;   1000.0
+	    	// [5]    [6]        im Array zeilenTeile
+	    	setWochenStunden(Integer.parseInt(zeilenTeile[5].trim()));  // "10"
+	    	// throws NumberFormatException bei Integer.parseInt
+	    	setFixum(Float.parseFloat(zeilenTeile[6].trim()));	// "1000.0"
+    	} 
+    	catch(ArrayIndexOutOfBoundsException e)
+    	{
+    		throw new PersonalException("Array-Fehler bei setAllFields(): " 
+    									+ e.getMessage());
+    	} 
+    	catch(NumberFormatException e)
+    	{
+    		throw new PersonalException("Zahlenumwandlungs-Fehler (wochenStunden oder fixum) bei setAllFields(): " 
+					+ e.getMessage());    		
+    	}    	
     }
 
     public float berechneStundensatz() throws PersonalException

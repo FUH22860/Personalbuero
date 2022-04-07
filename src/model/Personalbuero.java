@@ -15,7 +15,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-// 2022-04-01 4BAIF
+// 2022-04-05 4BAIF
 
 // Umgestellt auf ArrayList
 // mit public float berechneDurchnittsalter()
@@ -51,7 +51,10 @@ import java.util.List;
 
 // 2022-03-29 exportMitarbeiterCsv
 
-// 2022-04-01 importMitarbeiterCsc Vorbereitung
+// 2022-04-01 importMitarbeiterCsc() fuer Angestellte
+// 2022-04-05 importMitarbeiterCsc fuer Freelancer und Arzt
+
+// 2022-01-07 doppeltes aufnehmen verhindern, equals, hashcode (Old and new)
 
 public class Personalbuero {
 	private ArrayList<Mitarbeiter> mitarbeiter; // eine ArrayList ist "getypt"
@@ -77,7 +80,11 @@ public class Personalbuero {
 				// if (anzahl < mitarbeiter.length)
 				// {
 				// mitarbeiter[anzahl] = ma;
-				return mitarbeiter.add(ma); // liefert immer true
+				if (!mitarbeiter.contains(ma)) {
+					return mitarbeiter.add(ma); // liefert immer true
+				} else {
+					throw new PersonalException("Fehler bei aufnehmen(): Mitarbeiter/in schon vorhanden");
+				}
 				// anzahl ++;
 				// return true;
 				// }
@@ -317,9 +324,9 @@ public class Personalbuero {
 	public void saveMitarbeiter() throws PersonalException {
 
 		String fSep = System.getProperty("file.separator");
-		// String strPfadName = "c:\\scratch\\mitarbeiter.ser";
-		String strPfadName = "c:" + fSep + "scratch" + fSep + "mitarbeiter.ser";
-
+		//String strPfadName = "c:\\scratch\\mitarbeiter.ser"; 
+		String strPfadName = "c:"+ fSep + "scratch" + fSep + "mitarbeiter.ser";
+		
 		try ( // try with ressources -> close() erfolgt "automatisch"
 				ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(strPfadName));) {
 			// hier erfolgt das "Speichern"
@@ -333,24 +340,30 @@ public class Personalbuero {
 	}
 
 //	loadMitarbeiter Variante 2 OHNE suppressWarning -> empfohlen
-	public void loadMitarbeiter() throws PersonalException {
-
+	public void loadMitarbeiter() throws PersonalException
+	{
+		
 		String fSep = System.getProperty("file.separator");
-		// String strPfadName = "c:\\scratch\\mitarbeiter.ser";
-		String strPfadName = "c:" + fSep + "scratch" + fSep + "mitarbeiter.ser";
+		//String strPfadName = "c:\\scratch\\mitarbeiter.ser"; 	
+		String strPfadName = "c:"+ fSep + "scratch" + fSep + "mitarbeiter.ser";		
 
-		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(strPfadName))) {
-
-			List<?> tempMitarbeiter = (List<?>) ois.readObject();
-
+		
+		try ( ObjectInputStream ois = 
+				new ObjectInputStream(new FileInputStream(strPfadName)))
+		{
+						
+			List <?> tempMitarbeiter = (List <?>) ois.readObject();
+			
 			mitarbeiter.clear(); // ersetzen und NICHT hinzufuegen
-
-			for (Object o : tempMitarbeiter) {
-				if (o instanceof Mitarbeiter) {
-					aufnehmen((Mitarbeiter) o);
+			
+			for (Object o : tempMitarbeiter)
+			{
+				if (o instanceof Mitarbeiter)
+				{
+					aufnehmen((Mitarbeiter)o);
 				}
 			}
-
+		
 		} catch (FileNotFoundException e) {
 			throw new PersonalException("Datei-Fehler bei loadMitarbeiter(): " + e.getMessage());
 		} catch (IOException e) {
@@ -359,7 +372,7 @@ public class Personalbuero {
 			throw new PersonalException("Klassen-Fehler bei loadMitarbeiter(): " + e.getMessage());
 		}
 	}
-
+	
 	// Variante1: es geht "typsicherer" -> Variante2
 //	@SuppressWarnings("unchecked") // funktionsfaehige allerdings nicht empfohlene Variante1
 //	public void loadMitarbeiter() throws PersonalException
@@ -380,72 +393,94 @@ public class Personalbuero {
 //			throw new PersonalException("Klassen-Fehler bei loadMitarbeiter(): " + e.getMessage());
 //		}
 //	}
-
-	public void exportMitarbeiter() throws PersonalException {
-
+	
+	public void exportMitarbeiter() throws PersonalException
+	{
+		
 		String fSep = System.getProperty("file.separator");
-		String strPfadName = "c:" + fSep + "scratch" + fSep + "mitarbeiter.txt";
+		String strPfadName = "c:"+ fSep + "scratch" + fSep + "mitarbeiter.txt";	
 		String nLn = System.getProperty("line.separator");
-
-		try (BufferedWriter bw = new BufferedWriter(new FileWriter(strPfadName))) {
-			for (Mitarbeiter mit : mitarbeiter) {
-				// bw.write(mit.toString() + "\n");
+		
+		try ( BufferedWriter bw = new BufferedWriter(new FileWriter(strPfadName)))
+		{
+			for (Mitarbeiter mit : mitarbeiter)
+			{
+				//bw.write(mit.toString() + "\n"); 
 				bw.write(mit.toString() + nLn); // mit Line-Separator
 			}
-
+			
 		} catch (IOException e) {
-			throw new PersonalException("Eingabe/Ausgabe-Fehler bei exportMitarbeiter()" + e.getMessage());
+			throw new PersonalException("Eingabe/Ausgabe-Fehler bei exportMitarbeiter()" 
+										+ e.getMessage());
 		}
 	}
-
-	public void exportMitarbeiterCsv() throws PersonalException {
+	
+	public void exportMitarbeiterCsv() throws PersonalException
+	{
 		String fSep = System.getProperty("file.separator");
-		String strPfadName = "c:" + fSep + "scratch" + fSep + "mitarbeiter.csv";
+		String strPfadName = "c:"+ fSep + "scratch" + fSep + "mitarbeiter.csv";	
 		String nLn = System.getProperty("line.separator");
-
-		try (BufferedWriter bw = new BufferedWriter(new FileWriter(strPfadName))) {
+		
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter(strPfadName)))
+		{
 			StringBuilder sb = new StringBuilder(100000);
 			for (Mitarbeiter mit : mitarbeiter)
 				sb.append(mit.toStringCsv()).append(nLn); // .append("\n");
 			bw.write(sb.toString());
 		} catch (IOException e) {
-			throw new PersonalException("Eingabe/Ausgabe-Fehler bei exportMitarbeiterCsv()" + e.getMessage());
+			throw new PersonalException("Eingabe/Ausgabe-Fehler bei exportMitarbeiterCsv()" 
+										+ e.getMessage());
 		}
 	}
-
-	public void importMitarbeiterCsv() throws PersonalException // TODO
+	
+	// NEU 2022-04-06 mit Freelancer und Arzt
+	public void importMitarbeiterCsv() throws PersonalException
 	{
-		String fSep = System.getProperty("file.separator");
-		String strPfadName = "c:" + fSep + "scratch" + fSep + "mitarbeiter.csv";
-
-		try (BufferedReader br = new BufferedReader(new FileReader(strPfadName))) {
+		String fSep = System.getProperty("file.separator"); 
+		String strPfadName = "c:"+fSep+"scratch"+fSep+"mitarbeiter.csv";
+		
+		try(BufferedReader br = new BufferedReader(new FileReader(strPfadName)))
+		{
 			String zeile;
 			String[] zeilenTeile;
 			String sep = ";"; // erwartetes Trennzeichen in der csv-Datei
-
+			
 			// Muster: "Vorauslesen"
 			zeile = br.readLine(); // wenn keine Zeile gefunden, dann return null
-
-			while (zeile != null) {
+			
+			while(zeile != null)
+			{
 				zeilenTeile = zeile.trim().split(sep);
-
+				
 				// Welcher Konstruktor wird aufgerufen?
 				// Wie ermitteln wir den Mitarbeiter-Typ?
-
-				if (zeile.contains("Angestellter")) {
+				
+				if (zeile.contains("Angestellter"))
+				{
 					aufnehmen(new Angestellter(zeilenTeile));
-				} else
-					; // if ((zeile.contains("Freelancer"))
-						// else
-						// if ((zeile.contains("Arzt"))
-						// else unbekannter Mitarbeiter-Typ
+				}
+				else
+					if (zeile.contains("Freelancer"))
+					{
+						aufnehmen(new Freelancer(zeilenTeile));
+					}							
+					else
+						if (zeile.contains("Arzt"))
+						{
+							aufnehmen(new Arzt(zeilenTeile));
+						}								
+						else 
+							; // hier Mitarbeiter-Typ(en)
+							  // zukuenftiger Erweiterungen ergaenzen
 				zeile = br.readLine();
 			}
-
+			
 		} catch (FileNotFoundException e) {
-			throw new PersonalException("Datei-Fehler bei importMitarbeiterCsv(): " + e.getMessage());
+			throw new PersonalException("Datei-Fehler bei importMitarbeiterCsv(): " 
+					+ e.getMessage());
 		} catch (IOException e) {
-			throw new PersonalException("Eingabe/Ausgabe-Fehler bei importMitarbeiterCsv(): " + e.getMessage());
+			throw new PersonalException("Eingabe/Ausgabe-Fehler bei importMitarbeiterCsv(): " 
+					+ e.getMessage());
 		}
 	}
 
@@ -477,7 +512,7 @@ public class Personalbuero {
 			sb.append("keine Mitarbeiter im Personalbuero");
 		return sb.toString();
 	}
-
+	
 	public void print() {
 		System.out.println(this);
 	}
